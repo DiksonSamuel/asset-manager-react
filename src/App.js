@@ -1,10 +1,13 @@
+import { Provider } from 'react-redux';
 import './App.css';
+import MainRouter from './routes/mainRouter';
+import store from './store';
 
 function App() {
   return (
-    <div className="App">
-      <p className='text-[#000] text-[45px]'>hello world</p>
-    </div>
+    <Provider store={store}>
+      <MainRouter />
+    </Provider>
   );
 }
 
