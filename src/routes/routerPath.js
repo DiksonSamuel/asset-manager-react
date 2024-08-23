@@ -1,6 +1,6 @@
 const RouterPath = {
   DASHBOARD: '/',
-  ASSETS: '/'
+  ASSETS: '/assets'
 }
 
 export default RouterPath;
