@@ -27,7 +27,36 @@ const UserDashboardData = {
   },
 };
 
+  const cryptoListData = [
+    { "id": "bitcoin", "symbol": "BTC", "name": "Bitcoin" },
+    { "id": "ethereum", "symbol": "ETH", "name": "Ethereum" },
+    { "id": "ripple", "symbol": "XRP", "name": "Ripple" },
+    { "id": "litecoin", "symbol": "LTC", "name": "Litecoin" },
+    { "id": "cardano", "symbol": "ADA", "name": "Cardano" },
+    { "id": "polkadot", "symbol": "DOT", "name": "Polkadot" },
+    { "id": "chainlink", "symbol": "LINK", "name": "Chainlink" },
+    { "id": "stellar", "symbol": "XLM", "name": "Stellar" },
+    { "id": "dogecoin", "symbol": "DOGE", "name": "Dogecoin" },
+    { "id": "uniswap", "symbol": "UNI", "name": "Uniswap" }
+  ];
+
+  const stockListData = [
+    { "id": "apple", "symbol": "AAPL", "name": "Apple Inc." },
+    { "id": "microsoft", "symbol": "MSFT", "name": "Microsoft Corp." },
+    { "id": "alphabet", "symbol": "GOOGL", "name": "Alphabet Inc." },
+    { "id": "amazon", "symbol": "AMZN", "name": "Amazon.com Inc." },
+    { "id": "tesla", "symbol": "TSLA", "name": "Tesla Inc." },
+    { "id": "meta", "symbol": "META", "name": "Meta Platforms Inc." },
+    { "id": "nvidia", "symbol": "NVDA", "name": "NVIDIA Corporation" },
+    { "id": "netflix", "symbol": "NFLX", "name": "Netflix Inc." },
+    { "id": "intel", "symbol": "INTC", "name": "Intel Corporation" },
+    { "id": "ibm", "symbol": "IBM", "name": "IBM Corporation" }
+  ]
+
+
 
 export {
-  UserDashboardData
+  UserDashboardData,
+  cryptoListData,
+  stockListData
 }
