@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 // Initial state
@@ -6,7 +6,31 @@ const initialState = {
   assets: [],
   cryptoList: [],
   stockList: [],
+  calculatePercentageLoader: false
 };
+
+export const calculatePercentageChangeForAssets = createAsyncThunk(
+  'asset/calculatePercentageChangeForAssets',
+  async (assets, { dispatch }) => {
+    const updatedAssets = await Promise.all(assets.map(async (asset) => {
+      let latestPrice;
+
+      if (asset.type === 'Crypto') {
+        latestPrice = await fetchCryptoPrice(asset.name);
+      } else if (asset.type === 'Stocks') {
+        latestPrice = await fetchStockPrice(asset.name);
+      }
+
+      const percentageChange = ((latestPrice - asset.price) / asset.price) * 100;
+      return {
+        ...asset,
+        percentageChange: percentageChange.toFixed(2)
+      };
+    }));
+
+    dispatch(updateAsset(updatedAssets));
+  }
+);
 
 // Create slice
 export const assetsSlice = createSlice({
@@ -17,6 +41,7 @@ export const assetsSlice = createSlice({
       state.assets.push(action.payload);
     },
     editAsset: (state, action) => {
+      alert(JSON.stringify(action.payload))
       const index = state.assets.findIndex(asset => asset.id === action.payload.id);
       if (index !== -1) {
         state.assets[index] = action.payload;
@@ -34,26 +59,41 @@ export const assetsSlice = createSlice({
     setStockList: (state, action) => {
       state.stockList = action.payload;
     },
+    updateAsset: (state, action) => {
+      action.payload.forEach(updatedAsset => {
+        const index = state.assets.findIndex(asset => asset.id === updatedAsset.id);
+
+        if (index !== -1) {
+          state.assets[index] = updatedAsset;
+        }
+      });
+    }
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(calculatePercentageChangeForAssets.pending, (state) => {
+        state.calculatePercentageLoader = true;
+      })
+      .addCase(calculatePercentageChangeForAssets.pending, (state) => {
+        state.calculatePercentageLoader = false;
+      })
+      .addCase(calculatePercentageChangeForAssets.pending, (state) => {
+        state.calculatePercentageLoader = false;
+      })
+  }
 });
 
 // Actions
-export const { addAsset, editAsset, deleteAsset, setAssets, setCryptoList, setStockList } = assetsSlice.actions;
+export const { addAsset, editAsset, deleteAsset, setAssets, setCryptoList, setStockList, updateAsset } = assetsSlice.actions;
 
-// Thunks
-export const fetchCryptoList = () => async dispatch => {
-  const response = await axios.get('https://api.coingecko.com/api/v3/coins/list');
-  dispatch(setCryptoList(response.data));
+export const fetchCryptoPrice = async (cryptoId) => {
+  const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd`);
+  return response.data[cryptoId].usd;
 };
 
-export const fetchStockList = () => async dispatch => {
-  const response = await axios.get(`https://www.alphavantage.co/query`, {
-    params: {
-      function: 'LISTING_STATUS',
-      apikey: 'YOUR_API_KEY',
-    },
-  });
-  dispatch(setStockList(response.data.data));
+export const fetchStockPrice = async (stockSymbol) => {
+  const response = await axios.get(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stockSymbol}&interval=5min&apikey=EZE4QZQR74GKMPKD`);
+  return response.data.price;
 };
 
 export default assetsSlice.reducer;

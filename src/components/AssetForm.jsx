@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, TextField, Button, MenuItem, Select, InputLabel, FormControl, IconButton, InputAdornment } from '@mui/material';
-import { useDispatch, useSelector } from 'react-redux';
+import { Drawer, TextField, Button, MenuItem, Select, InputLabel, FormControl, IconButton, InputAdornment, Typography } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { addAsset, editAsset } from '../store/slices/assetSlice';
 import CloseIcon from '@mui/icons-material/Close';
 import { cryptoListData, stockListData } from '../configs/dummData';
+import Strings from '../utils/strings';
 
 const AssetForm = ({ open, onClose, asset }) => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ const AssetForm = ({ open, onClose, asset }) => {
     dateOfPurchase: '',
     percentageChange: 0,
   });
+  const [error, setError] = useState(0)
 
   useEffect(() => {
     if (asset) {
@@ -31,8 +33,9 @@ const AssetForm = ({ open, onClose, asset }) => {
         dateOfPurchase: '',
         percentageChange: 0,
       });
+      setError(0)
     }
-  }, [asset]);
+  }, [asset, open]);
 
   const handleChange = (e) => {
     setFormState({
@@ -42,10 +45,21 @@ const AssetForm = ({ open, onClose, asset }) => {
   };
 
   const handleSubmit = () => {
+    if(formState.name.length === 0 || formState.price.length === 0 || (formState.type !== 'Bond' && formState.quantity.length === 0) || formState.dateOfPurchase.length === 0) {
+      setError(1);
+      return;
+    }
+
+    
+
     if (asset) {
       dispatch(editAsset(formState));
     } else {
-      dispatch(addAsset({ ...formState, id: new Date().toISOString() }));
+      const newAsset = {
+        ...formState,
+        id: new Date(), // Set the computed asset ID
+      };
+      dispatch(addAsset(newAsset));
     }
     onClose();
   };
@@ -59,6 +73,8 @@ const AssetForm = ({ open, onClose, asset }) => {
             <CloseIcon />
           </IconButton>
         </div>
+
+        {/* Asset Type Dropdown */}
         <div className='w-full'>
           <InputLabel>Type</InputLabel>
           <Select
@@ -72,6 +88,8 @@ const AssetForm = ({ open, onClose, asset }) => {
             <MenuItem value="Bond">Bond</MenuItem>
           </Select>
         </div>
+
+        {/* Asset Name Dropdown (for Crypto & Stocks) */}
         {formState.type !== 'Bond' && (
           <div className='w-full mt-[10px]'>
             <InputLabel>Name</InputLabel>
@@ -90,35 +108,47 @@ const AssetForm = ({ open, onClose, asset }) => {
             </Select>
           </div>
         )}
+
+        {/* Asset Name Input for Bonds */}
         {formState.type === 'Bond' && (
           <TextField
-          name="name"
-          label="Name"
-          value={formState.name}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />
+            name="name"
+            label="Name"
+            value={formState.name}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
         )}
+
+        {/* Price Input */}
         <TextField
           name="price"
           label="Total Price"
           type="number"
           value={formState.price}
-          startAdornment={<InputAdornment position="start">$</InputAdornment>}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
           onChange={handleChange}
           fullWidth
           margin="normal"
         />
-        {formState.type !== 'Bond' &&<TextField
-          name="quantity"
-          label="Quantity"
-          type="number"
-          value={formState.quantity}
-          onChange={handleChange}
-          fullWidth
-          margin="normal"
-        />}
+
+        {/* Quantity Input (Not for Bonds) */}
+        {formState.type !== 'Bond' && (
+          <TextField
+            name="quantity"
+            label="Quantity"
+            type="number"
+            value={formState.quantity}
+            onChange={handleChange}
+            fullWidth
+            margin="normal"
+          />
+        )}
+
+        {/* Date of Purchase */}
         <TextField
           name="dateOfPurchase"
           label="Date of Purchase"
@@ -129,8 +159,9 @@ const AssetForm = ({ open, onClose, asset }) => {
           margin="normal"
           InputLabelProps={{ shrink: true }}
         />
-        
-        <Button onClick={handleSubmit} variant="contained" color="primary" fullWidth>
+        {error === 1 && <Typography color={'red'} paddingY={2}>{Strings.completeAllFields}</Typography>}
+        {/* Submit Button */}
+        <Button className='!mt-[20px] h-[45px]' onClick={handleSubmit} variant="contained" color="primary" fullWidth>
           {asset ? 'Update' : 'Add'}
         </Button>
       </div>
