@@ -1,38 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Drawer, TextField, Button, MenuItem, Select, InputLabel, FormControl, IconButton, InputAdornment, Typography } from '@mui/material';
+import { Drawer, TextField, Button, MenuItem, Select, InputLabel, IconButton, InputAdornment, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import { addAsset, editAsset } from '../store/slices/assetSlice';
 import CloseIcon from '@mui/icons-material/Close';
-import { cryptoListData, stockListData } from '../configs/dummData';
+import { assetInitData, cryptoListData, stockListData } from '../configs/dummyData';
 import Strings from '../utils/strings';
 
 const AssetForm = ({ open, onClose, asset }) => {
   const dispatch = useDispatch();
 
-  const [formState, setFormState] = useState({
-    id: '',
-    type: 'Crypto',
-    name: '',
-    price: '',
-    quantity: '',
-    dateOfPurchase: '',
-    percentageChange: 0,
-  });
+  const [formState, setFormState] = useState(assetInitData);
   const [error, setError] = useState(0)
 
   useEffect(() => {
     if (asset) {
       setFormState(asset);
     } else {
-      setFormState({
-        id: '',
-        type: 'Crypto',
-        name: '',
-        price: '',
-        quantity: '',
-        dateOfPurchase: '',
-        percentageChange: 0,
-      });
+      setFormState(assetInitData);
       setError(0)
     }
   }, [asset, open]);
@@ -76,23 +60,22 @@ const AssetForm = ({ open, onClose, asset }) => {
 
         {/* Asset Type Dropdown */}
         <div className='w-full'>
-          <InputLabel>Type</InputLabel>
+          <InputLabel>{Strings.type}</InputLabel>
           <Select
             name="type"
             value={formState.type}
             onChange={handleChange}
             className='!w-full'
           >
-            <MenuItem value="Crypto">Crypto</MenuItem>
-            <MenuItem value="Stocks">Stocks</MenuItem>
-            <MenuItem value="Bond">Bond</MenuItem>
+            <MenuItem value="Crypto">{Strings.crypto}</MenuItem>
+            <MenuItem value="Stocks">{Strings.stocks}</MenuItem>
+            <MenuItem value="Bond">{Strings.bond}</MenuItem>
           </Select>
         </div>
 
-        {/* Asset Name Dropdown (for Crypto & Stocks) */}
         {formState.type !== 'Bond' && (
           <div className='w-full mt-[10px]'>
-            <InputLabel>Name</InputLabel>
+            <InputLabel>{Strings.name}</InputLabel>
             <Select
               name="name"
               value={formState.name}
@@ -109,7 +92,6 @@ const AssetForm = ({ open, onClose, asset }) => {
           </div>
         )}
 
-        {/* Asset Name Input for Bonds */}
         {formState.type === 'Bond' && (
           <TextField
             name="name"
@@ -121,7 +103,6 @@ const AssetForm = ({ open, onClose, asset }) => {
           />
         )}
 
-        {/* Price Input */}
         <TextField
           name="price"
           label="Total Price"
@@ -135,7 +116,6 @@ const AssetForm = ({ open, onClose, asset }) => {
           margin="normal"
         />
 
-        {/* Quantity Input (Not for Bonds) */}
         {formState.type !== 'Bond' && (
           <TextField
             name="quantity"
@@ -148,7 +128,6 @@ const AssetForm = ({ open, onClose, asset }) => {
           />
         )}
 
-        {/* Date of Purchase */}
         <TextField
           name="dateOfPurchase"
           label="Date of Purchase"
@@ -160,7 +139,7 @@ const AssetForm = ({ open, onClose, asset }) => {
           InputLabelProps={{ shrink: true }}
         />
         {error === 1 && <Typography color={'red'} paddingY={2}>{Strings.completeAllFields}</Typography>}
-        {/* Submit Button */}
+
         <Button className='!mt-[20px] h-[45px]' onClick={handleSubmit} variant="contained" color="primary" fullWidth>
           {asset ? 'Update' : 'Add'}
         </Button>

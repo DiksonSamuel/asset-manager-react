@@ -1,11 +1,12 @@
-import { UserDashboardData } from "../configs/dummData";
+import { UserDashboardData } from "../configs/dummyData";
 
 const initialRootState = {
   dashboad: {
     userDashboardData: UserDashboardData
   },
   asset: {
-
+    assets: [],
+    calculatePercentageLoader: false
   },
   common: {
 

@@ -4,22 +4,19 @@ import { ArrowDownward, ArrowUpward, Delete, Edit } from '@mui/icons-material';
 import Strings from '../utils/strings';
 
 const AssetTable = ({ assets, onDelete, onEdit, handleOpenForm }) => {
-
-  const [search, setSearch] = React.useState('');
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [tableList, setTableList] = useState([]);
 
   useEffect(() => {
-    // Filter assets based on the search query
     const filteredAssets = assets.filter(asset =>
       asset.name.toLowerCase().includes(search.toLowerCase())
     );
 
-    // Paginate the filtered assets
     const paginatedAssets = filteredAssets.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
     setTableList(paginatedAssets);
-  }, [assets, search, page, rowsPerPage]);  // Add search to the dependency array
+  }, [assets, search, page, rowsPerPage]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -27,12 +24,11 @@ const AssetTable = ({ assets, onDelete, onEdit, handleOpenForm }) => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset to the first page whenever rows per page changes
+    setPage(0);
   };
 
   return (
-    <div className="w-full px-4 py-6">
-      {/* Search and Add Asset Button */}
+    <div className="w-full px-4 py-[0px]">
       <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-4">
         <TextField
           label="Search"
@@ -51,10 +47,9 @@ const AssetTable = ({ assets, onDelete, onEdit, handleOpenForm }) => {
         </Button>
       </div>
 
-      {/* Responsive Table Container */}
       <div className="overflow-x-auto shadow-md sm:rounded-lg">
-        <TableContainer>
-          <Table>
+      <TableContainer style={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}>
+          <Table stickyHeader>
             <TableHead>
               <TableRow className='bg-light-blue'>
                 <TableCell className="text-gray-600 font-semibold">{Strings.name}</TableCell>
@@ -97,8 +92,8 @@ const AssetTable = ({ assets, onDelete, onEdit, handleOpenForm }) => {
                     <IconButton color="primary" onClick={() => onEdit(asset)}>
                       <Edit />
                     </IconButton>
-                    <IconButton color="secondary" onClick={() => onDelete(asset.id)}>
-                      <Delete />
+                    <IconButton onClick={() => onDelete(asset.id)}>
+                      <Delete className='!text-red' />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -107,7 +102,6 @@ const AssetTable = ({ assets, onDelete, onEdit, handleOpenForm }) => {
           </Table>
         </TableContainer>
 
-        {/* Pagination */}
         <div className="bg-white p-4">
           <TablePagination
             rowsPerPageOptions={[10, 25, 50]}

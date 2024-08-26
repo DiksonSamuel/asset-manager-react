@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCryptoList, fetchStockList, deleteAsset, setAssets, calculatePercentageChangeForAssets } from '../store/slices/assetSlice';
+import { deleteAsset, calculatePercentageChangeForAssets } from '../store/slices/assetSlice';
 import AssetForm from '../components/AssetForm';
 import AssetTable from '../components/AssetTable';
 import AlertDialog from '../components/AlertDailog';
@@ -15,22 +15,28 @@ const Assets = () => {
   const dispatch = useDispatch();
   const assets = useSelector(state => state.asset.assets);
   const loader = useSelector(state => state.asset.calculatePercentageLoader);
-
-  // useEffect(() => {
-  //   dispatch(fetchCryptoList());
-  //   dispatch(fetchStockList());
-  // }, [dispatch]);
+  const assetsLengthRef = useRef(assets.length)
 
   useEffect(() => {
     if (assets.length > 0) {
-      // Filter only crypto and stock assets
-      const assetsToUpdate = assets.filter(asset => asset.type === 'Crypto');
+      calculatePercentageForCrypto()
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    if(assetsLengthRef.current !== assets.length) {
+      calculatePercentageForCrypto()
+    }
+    assetsLengthRef.current = assets.length;
+  },[assets])
+
+  const calculatePercentageForCrypto = () => {
+    const assetsToUpdate = assets.filter(asset => asset.type === 'Crypto');
 
       if (assetsToUpdate.length > 0) {
         dispatch(calculatePercentageChangeForAssets(assetsToUpdate));
       }
-    }
-  }, [dispatch, assets]);
+  }
 
   const handleOpenForm = (asset = null) => {
     setCurrentAsset(asset);
@@ -53,7 +59,7 @@ const Assets = () => {
 
   if(loader) {
     return(
-      <div className="p-8 flex flex-1">
+      <div className="p-8 flex flex-1 items-center justify-center">
         <CircularProgress />
       </div>
     )

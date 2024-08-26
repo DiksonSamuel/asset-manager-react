@@ -1,16 +1,20 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import colors from '../utils/colors';
+import Strings from '../utils/strings';
+import { weekData } from '../configs/dummyData';
+
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ActivityChart = ({ data }) => {
   const chartData = {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+    labels: weekData,
     datasets: [
       {
-        label: 'Transactions',
+        label: Strings.transaction,
         data: data.activity.weeklyTransactions,
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        backgroundColor: colors['chart-green'],
       },
     ],
   };

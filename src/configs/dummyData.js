@@ -51,12 +51,26 @@ const UserDashboardData = {
     { "id": "netflix", "symbol": "NFLX", "name": "Netflix Inc." },
     { "id": "intel", "symbol": "INTC", "name": "Intel Corporation" },
     { "id": "ibm", "symbol": "IBM", "name": "IBM Corporation" }
-  ]
+  ];
+
+  const weekData = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+  const assetInitData = {
+    id: '',
+    type: 'Crypto',
+    name: '',
+    price: '',
+    quantity: '',
+    dateOfPurchase: '',
+    percentageChange: 0,
+  }
 
 
 
 export {
   UserDashboardData,
   cryptoListData,
-  stockListData
+  stockListData,
+  weekData,
+  assetInitData
 }

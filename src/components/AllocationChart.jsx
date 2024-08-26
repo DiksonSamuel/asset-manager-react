@@ -1,5 +1,6 @@
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
+import colors from '../utils/colors';
 
 const AllocationChart = ({ data }) => {
   const chartData = {
@@ -7,7 +8,7 @@ const AllocationChart = ({ data }) => {
     datasets: [
       {
         data: data.allocation.categories.map(category => category.value),
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        backgroundColor: [colors['chart-rose'], colors['chart-blue'], colors['chart-yellow']],
       },
     ],
   };

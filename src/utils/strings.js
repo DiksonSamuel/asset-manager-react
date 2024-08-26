@@ -18,7 +18,14 @@ const Strings = {
   assetDeleteConfirmationMessage: 'Are you sure you want to delete this asset? This action cannot be undone.',
   areYouSure: 'Are you sure?',
   confirm: 'Confirm',
-  cancel: 'Cancel'
+  cancel: 'Cancel',
+  transaction: 'Transaction',
+  portfolioValue: 'Portfolio Value',
+  crypto: 'Crypto',
+  stocks: 'Stocks',
+  bond: 'Bond',
+  type: 'Type',
+  name: 'Name'
 }
 
 export default Strings;

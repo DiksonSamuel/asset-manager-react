@@ -1,13 +1,8 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import initialRootState from '../initialRootState';
 
-// Initial state
-const initialState = {
-  assets: [],
-  cryptoList: [],
-  stockList: [],
-  calculatePercentageLoader: false
-};
+const initialState = initialRootState.asset
 
 export const calculatePercentageChangeForAssets = createAsyncThunk(
   'asset/calculatePercentageChangeForAssets',
@@ -32,7 +27,17 @@ export const calculatePercentageChangeForAssets = createAsyncThunk(
   }
 );
 
-// Create slice
+export const fetchCryptoPrice = async (cryptoId) => {
+  const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd`);
+  return response.data[cryptoId].usd;
+};
+
+export const fetchStockPrice = async (stockSymbol) => {
+  const response = await axios.get(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stockSymbol}&interval=5min&apikey=EZE4QZQR74GKMPKD`);
+  return response.data.price;
+};
+
+
 export const assetsSlice = createSlice({
   name: 'asset',
   initialState,
@@ -74,10 +79,10 @@ export const assetsSlice = createSlice({
       .addCase(calculatePercentageChangeForAssets.pending, (state) => {
         state.calculatePercentageLoader = true;
       })
-      .addCase(calculatePercentageChangeForAssets.pending, (state) => {
+      .addCase(calculatePercentageChangeForAssets.fulfilled, (state) => {
         state.calculatePercentageLoader = false;
       })
-      .addCase(calculatePercentageChangeForAssets.pending, (state) => {
+      .addCase(calculatePercentageChangeForAssets.rejected, (state) => {
         state.calculatePercentageLoader = false;
       })
   }
@@ -85,15 +90,5 @@ export const assetsSlice = createSlice({
 
 // Actions
 export const { addAsset, editAsset, deleteAsset, setAssets, setCryptoList, setStockList, updateAsset } = assetsSlice.actions;
-
-export const fetchCryptoPrice = async (cryptoId) => {
-  const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd`);
-  return response.data[cryptoId].usd;
-};
-
-export const fetchStockPrice = async (stockSymbol) => {
-  const response = await axios.get(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${stockSymbol}&interval=5min&apikey=EZE4QZQR74GKMPKD`);
-  return response.data.price;
-};
 
 export default assetsSlice.reducer;

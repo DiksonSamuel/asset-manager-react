@@ -14,7 +14,7 @@ const Dashboard = () => {
   return (
     <Container maxWidth="lg">
       <Typography variant="h4" marginTop={2} gutterBottom>
-        Welcome, Dikson
+        {Strings.welcomeWithComa} Dikson
       </Typography>
 
       <Grid container spacing={4}>
